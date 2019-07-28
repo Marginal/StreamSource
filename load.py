@@ -86,10 +86,15 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
         this.station = station
         write_file('EDMC Station.txt', this.station)
 
-    if 'Body' in entry and entry.get('BodyType') != 'Station' and this.body != entry['Body']:
-        this.body = entry['Body']
-        write_file('EDMC Body.txt', this.body)
-    elif entry['event'] in ['StartUp', 'Location', 'LeaveBody', 'SupercruiseEntry']:
+    if entry['event'] in ['FSDJump', 'LeaveBody', 'Location', 'SupercruiseEntry', 'SupercruiseExit'] and entry.get('BodyType') in [None, 'Station']:
+        if this.body:
+            this.body = None
+            write_file('EDMC Body.txt')
+    elif 'Body' in entry:	# StartUp, ApproachBody, Location, SupercruiseExit
+        if this.body != entry['Body']:
+            this.body = entry['Body']
+            write_file('EDMC Body.txt', this.body)
+    elif entry['event'] == 'StartUp':
         this.body = None
         write_file('EDMC Body.txt')
 
