@@ -14,7 +14,7 @@ from config import config
 from companion import ship_map
 from l10n import Locale
 
-VERSION = '1.00'
+VERSION = '1.10'
 
 this = sys.modules[__name__]	# For holding module globals
 this.outdir = config.get('outdir')
