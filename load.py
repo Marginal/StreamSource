@@ -6,6 +6,7 @@
 # https://www.xsplit.com/broadcaster/getting-started/adding-text
 #
 
+from io import open	# For Python 2&3 a version of open that supports both encoding and universal newlines
 from os.path import join
 import sys
 
@@ -34,14 +35,14 @@ this.shipname = 'Ship name'
 def write_all():
     write_file('EDMC System.txt', this.system)
     write_file('EDMC StarPos.txt', '%s %s %s' % (
-        Locale.stringFromNumber(this.starpos[0], 5).encode('utf-8'),
-        Locale.stringFromNumber(this.starpos[1], 5).encode('utf-8'),
-        Locale.stringFromNumber(this.starpos[2], 5).encode('utf-8')))
+        Locale.stringFromNumber(this.starpos[0], 5),
+        Locale.stringFromNumber(this.starpos[1], 5),
+        Locale.stringFromNumber(this.starpos[2], 5)))
     write_file('EDMC Station.txt', this.station)
     write_file('EDMC Body.txt', this.body)
     write_file('EDMC LatLon.txt', '%s %s' % (
-        Locale.stringFromNumber(this.latlon[0], 6).encode('utf-8'),
-        Locale.stringFromNumber(this.latlon[1], 6).encode('utf-8')))
+        Locale.stringFromNumber(this.latlon[0], 6),
+        Locale.stringFromNumber(this.latlon[1], 6)))
     write_file('EDMC Station or Body.txt', this.stationorbody)
     write_file('EDMC Station or Body or System.txt', this.stationorbodyorsystem)
     write_file('EDMC ShipType.txt', this.shiptype)
@@ -51,10 +52,14 @@ def write_all():
 # write one file
 def write_file(name, text=None):
     # File needs to be closed for the streaming software to notice its been updated.
-    with open(join(this.outdir, name), 'wt') as h:
-        h.write('%s\n' % (text or ''))
+    with open(join(this.outdir, name), 'w', encoding='utf-8') as h:
+        h.write(u'%s\n' % (text or u''))
         h.close()
 
+
+# Write placeholder values for positioning
+def plugin_start3(plugin_dir):
+    write_all()
 
 # Write placeholder values for positioning
 def plugin_start():
@@ -78,9 +83,9 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
     if 'StarPos' in entry and this.starpos != tuple(entry['StarPos']):
         this.starpos = tuple(entry['StarPos'])
         write_file('EDMC StarPos.txt', '%s %s %s' % (
-            Locale.stringFromNumber(this.starpos[0], 5).encode('utf-8'),
-            Locale.stringFromNumber(this.starpos[1], 5).encode('utf-8'),
-            Locale.stringFromNumber(this.starpos[2], 5).encode('utf-8')))
+            Locale.stringFromNumber(this.starpos[0], 5),
+            Locale.stringFromNumber(this.starpos[1], 5),
+            Locale.stringFromNumber(this.starpos[2], 5)))
 
     if this.station != station:
         this.station = station
@@ -112,7 +117,7 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
 
     if this.shipname != (state['ShipName'] or this.shiptype):
         this.shipname = (state['ShipName'] or this.shiptype)
-        write_file('EDMC ShipName.txt', state['ShipName'] and state['ShipName'].encode('utf-8') or ship_map.get(this.shiptype, this.shiptype))
+        write_file('EDMC ShipName.txt', state['ShipName'] and state['ShipName'] or ship_map.get(this.shiptype, this.shiptype))
 
 
 # Write any files with changed data
@@ -121,8 +126,8 @@ def dashboard_entry(cmdr, is_beta, entry):
         if this.latlon != (entry['Latitude'], entry['Longitude']):
             this.latlon = (entry['Latitude'], entry['Longitude'])
             write_file('EDMC LatLon.txt', '%s %s' % (
-                Locale.stringFromNumber(this.latlon[0], 6).encode('utf-8'),
-                Locale.stringFromNumber(this.latlon[1], 6).encode('utf-8')))
+                Locale.stringFromNumber(this.latlon[0], 6),
+                Locale.stringFromNumber(this.latlon[1], 6)))
     elif this.latlon:
         this.latlon = None
         write_file('EDMC LatLon.txt')
