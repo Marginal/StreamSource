@@ -29,6 +29,7 @@ this.stationorbody = 'Station or Body'
 this.stationorbodyorsystem = 'Station or Body or System'
 this.shiptype = 'Ship type'
 this.shipname = 'Ship name'
+this.shipident = 'Ship Ident'
 
 
 # write out all files
@@ -47,6 +48,7 @@ def write_all():
     write_file('EDMC Station or Body or System.txt', this.stationorbodyorsystem)
     write_file('EDMC ShipType.txt', this.shiptype)
     write_file('EDMC ShipName.txt', this.shipname)
+    write_file('EDMC ShipID.txt', this.shipident)
 
 
 # write one file
@@ -118,6 +120,10 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
     if this.shipname != (state['ShipName'] or this.shiptype):
         this.shipname = (state['ShipName'] or this.shiptype)
         write_file('EDMC ShipName.txt', state['ShipName'] and state['ShipName'] or ship_map.get(this.shiptype, this.shiptype))
+
+    if this.shipident != state['ShipIdent']:
+        this.shipident = state['ShipIdent']
+        write_file('EDMC ShipID.txt', ship_map.get(this.shipident, this.shipident))
 
 
 # Write any files with changed data
