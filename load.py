@@ -5,16 +5,20 @@
 # https://telestream.force.com/kb2/articles/Knowledge_Article/Gameshow-Add-Text
 # https://www.xsplit.com/broadcaster/getting-started/adding-text
 #
+# Updated for Elite Dangerous: Odyssey and EDMC 5.0.0 and on
+#
 
 from io import open	# For Python 2&3 a version of open that supports both encoding and universal newlines
 from os.path import join
 import sys
 
 from config import config
-from companion import ship_map
+from Shiptype import ship_map
 from l10n import Locale
 
-VERSION = '1.10'
+Version = '1.11' # Updated to to include ship_map removed in EDMC 5.0.0 companion.py. ship_map was included in Shiptype.py
+
+
 
 this = sys.modules[__name__]	# For holding module globals
 this.outdir = config.get('outdir')
